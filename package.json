@@ -1,0 +1,22 @@
+{
+    "name": "influencer-trademark-platform",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "install-all": "lerna bootstrap",
+      "start": "concurrently -n \"Backend,Web,Mobile\" -c \"blue,green,yellow\" \"npm run dev --prefix packages/backend\" \"npm start --prefix packages/web\" \"npm start --prefix packages/mobile\"",
+      "dev-backend": "npm run dev --prefix packages/backend",
+      "dev-web": "npm start --prefix packages/web",
+      "dev-mobile": "npm start --prefix packages/mobile"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "dependencies": {
+      "concurrently": "^9.1.2",
+      "lerna": "^8.2.1"
+    }
+  }
+  
