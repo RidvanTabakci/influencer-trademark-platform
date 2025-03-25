@@ -9,8 +9,8 @@
 9        android:targetSdkVersion="34" />
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:3:5-67
-11-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:3:22-64
+11-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:3:5-67
+11-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:3:22-64
 12    <!--
 13    This manifest file is used only by Gradle to configure debug-only capabilities
 14    for React Native Apps.
@@ -31,50 +31,50 @@
 22-->[androidx.core:core:1.9.0] /Users/ridvan/.gradle/caches/8.8/transforms/0c02aa65ff8b11d5022566d0302b25e2/transformed/core-1.9.0/AndroidManifest.xml:26:22-94
 23
 24    <application
-24-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:5:5-25:19
+24-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:5:5-25:19
 25        android:name="com.mobile.MainApplication"
-25-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:6:7-38
+25-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:6:7-38
 26        android:allowBackup="false"
-26-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:10:7-34
+26-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:10:7-34
 27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
 27-->[androidx.core:core:1.9.0] /Users/ridvan/.gradle/caches/8.8/transforms/0c02aa65ff8b11d5022566d0302b25e2/transformed/core-1.9.0/AndroidManifest.xml:28:18-86
 28        android:debuggable="true"
 29        android:extractNativeLibs="false"
 30        android:icon="@mipmap/ic_launcher"
-30-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:8:7-41
+30-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:8:7-41
 31        android:label="@string/app_name"
-31-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:7:7-39
+31-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:7:7-39
 32        android:roundIcon="@mipmap/ic_launcher_round"
-32-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:9:7-52
+32-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:9:7-52
 33        android:supportsRtl="true"
-33-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:12:7-33
+33-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:12:7-33
 34        android:theme="@style/AppTheme"
-34-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:11:7-38
+34-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:11:7-38
 35        android:usesCleartextTraffic="true" >
-35-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/debug/AndroidManifest.xml:6:9-44
+35-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/debug/AndroidManifest.xml:6:9-44
 36        <activity
-36-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:13:7-24:18
+36-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:13:7-24:18
 37            android:name="com.mobile.MainActivity"
-37-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:14:9-37
+37-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:14:9-37
 38            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
-38-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:16:9-118
+38-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:16:9-118
 39            android:exported="true"
-39-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:19:9-32
+39-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:19:9-32
 40            android:label="@string/app_name"
-40-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:15:9-41
+40-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:15:9-41
 41            android:launchMode="singleTask"
-41-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:17:9-40
+41-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:17:9-40
 42            android:windowSoftInputMode="adjustResize" >
-42-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:18:9-51
+42-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:18:9-51
 43            <intent-filter>
-43-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:20:9-23:25
+43-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:20:9-23:25
 44                <action android:name="android.intent.action.MAIN" />
-44-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:21:13-65
-44-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:21:21-62
+44-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:21:13-65
+44-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:21:21-62
 45
 46                <category android:name="android.intent.category.LAUNCHER" />
-46-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:22:13-73
-46-->/Users/ridvan/Downloads/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:22:23-70
+46-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:22:13-73
+46-->/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/android/app/src/main/AndroidManifest.xml:22:23-70
 47            </intent-filter>
 48        </activity>
 49        <activity
