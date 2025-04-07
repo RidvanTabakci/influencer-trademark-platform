@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "reac
 import axios from "axios";
 import API_URL from "../config";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation, setIsLoggedIn }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,8 +21,12 @@ const RegisterScreen = () => {
         password,
       });
 
-      Alert.alert("Başarılı", "Kayıt başarıyla tamamlandı!");
+      Alert.alert("Başarılı", "Kayıt tamamlandı, giriş yapılıyor...");
       console.log("Kayıtlı Kullanıcı:", response.data);
+
+      // Otomatik giriş (token varsa)
+      setIsLoggedIn(true);
+
     } catch (error) {
       console.error("Kayıt Hatası:", error.response?.data || error.message);
       Alert.alert("Hata", "Kayıt sırasında bir hata oluştu.");

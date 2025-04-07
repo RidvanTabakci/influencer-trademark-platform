@@ -1,81 +1,128 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Şifre:", password);
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Kullanıcı Girişi</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#1c1c1e" }}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.greeting}>Hoş geldin 👋</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#fff"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+        <TextInput
+          placeholder="Marka veya kampanya ara..."
+          placeholderTextColor="#ccc"
+          style={styles.searchInput}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Şifre"
-        placeholderTextColor="#fff"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <Text style={styles.sectionTitle}>Senin İçin Önerilenler</Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Giriş Yap</Text>
-      </TouchableOpacity>
-    </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #1</Text>
+          <Text style={styles.cardDesc}>Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Kampanya #2</Text>
+          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Detayları Gör</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#1c1c1e",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
+    padding: 20,
+    paddingBottom: 100,
   },
-  title: {
-    fontSize: 22,
+  greeting: {
+    fontSize: 26,
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 20,
   },
-  input: {
-    width: "100%",
-    backgroundColor: "#7c58c2",
-    padding: 15,
+  searchInput: {
+    backgroundColor: "#2c2c2e",
     borderRadius: 10,
-    marginBottom: 15,
-    color: "#fff",
+    padding: 15,
     fontSize: 16,
+    color: "#fff",
+    marginBottom: 25,
+  },
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  card: {
+    backgroundColor: "#323232",
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 20,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 10,
+  },
+  cardDesc: {
+    color: "#ccc",
+    fontSize: 14,
+    marginBottom: 15,
   },
   button: {
     backgroundColor: "#7c58c2",
-    padding: 15,
-    borderRadius: 10,
+    paddingVertical: 10,
+    borderRadius: 8,
     alignItems: "center",
-    width: "100%",
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
     fontWeight: "bold",
   },
 });
 
 export default HomeScreen;
-

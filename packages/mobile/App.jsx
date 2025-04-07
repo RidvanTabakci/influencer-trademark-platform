@@ -1,15 +1,13 @@
-
-import {NavigationContainer} from "@react-navigation/native";
-import {RootTabs} from "./src/Routes/navigation";
-import {GestureHandlerRootView} from "react-native-gesture-handler";
+import React from 'react';
+import Navigation from './src/Routes/navigation'; // içinde NavigationContainer var
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
   return (
-      <GestureHandlerRootView style={{flex: 1}}>
-        <NavigationContainer>
-            <RootTabs/>
-        </NavigationContainer>
-      </GestureHandlerRootView>
-  )
-}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Navigation /> 
+    </GestureHandlerRootView>
+  );
+};
+
 export default App;

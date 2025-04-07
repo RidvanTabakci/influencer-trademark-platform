@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "reac
 import axios from "axios";
 import API_URL from "../config";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation, setIsLoggedIn }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,6 +17,8 @@ const LoginScreen = () => {
       const response = await axios.post(`${API_URL}/api/users/login`, { email, password });
       Alert.alert("Başarılı", "Giriş yapıldı!");
       console.log("Token:", response.data.token);
+
+      setIsLoggedIn(true); // Kullanıcıyı uygulamaya al
     } catch (error) {
       Alert.alert("Hata", error.response?.data?.error || "Giriş başarısız!");
     }
@@ -46,6 +48,10 @@ const LoginScreen = () => {
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Giriş Yap</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <Text style={{ color: "#aaa", marginTop: 15 }}>Hesabın yok mu? Kayıt Ol</Text>
       </TouchableOpacity>
     </View>
   );
