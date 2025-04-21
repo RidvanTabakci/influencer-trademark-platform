@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#1c1c1e" }}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -19,9 +21,17 @@ const HomeScreen = () => {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Kampanya #1</Text>
           <Text style={styles.cardDesc}>Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
+          <TouchableOpacity
+  style={styles.button}
+  onPress={() =>
+    navigation.navigate("CampaignDetail", {
+      title: "Kampanya #1",
+      description: "Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!",
+    })
+  }
+>
+  <Text style={styles.buttonText}>Detayları Gör</Text>
+</TouchableOpacity>
         </View>
 
         <View style={styles.card}>
