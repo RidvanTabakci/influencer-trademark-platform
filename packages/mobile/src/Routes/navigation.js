@@ -8,7 +8,7 @@ import {ProfileScreen} from '../Screens/profileScreen';
 import { New } from '../Screens/new';
 import RegisterScreen from '../Screens/RegisterScreen';
 import LoginScreen from '../Screens/LoginScreen';
-import CampaignDetailScreen from '../Screens/CampaignDetailScreen';
+import CreateCampaignScreen from '../Screens/CreateCampaignScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -19,7 +19,7 @@ function HomeStack() {
 
       <Stack.Screen name="homeScreen" component={HomeScreen} />
       <Stack.Screen name="New" component={New} />
-      <Stack.Screen name="CampaignDetail" component={CampaignDetailScreen} options={{ title: "Kampanya Detayı" }} />
+      <Stack.Screen name="Create Campaign" component={CreateCampaignScreen} options={{ title: "Kampanya Detayı" }} />
     </Stack.Navigator>
   );
 }

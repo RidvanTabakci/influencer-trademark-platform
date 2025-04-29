@@ -1,81 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused, useRoute } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const isFocused = useIsFocused();
+
+  const [campaigns, setCampaigns] = useState([
+    {
+      title: "Kampanya #1",
+      description: "Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!",
+    },
+    {
+      title: "Kampanya #2",
+      description: "Moda kategorisinde 5 işbirliği yayında!",
+    },
+  ]);
+
+  // Yeni ilanı dinamik olarak ekle
+  useEffect(() => {
+    if (isFocused && route.params?.newCampaign) {
+      setCampaigns(prev => [route.params.newCampaign, ...prev]);
+    }
+  }, [isFocused, route.params]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#1c1c1e" }}>
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.greeting}>Hoş geldin 👋</Text>
 
+        {/* İlan Oluştur Butonu */}
+        <TouchableOpacity
+          style={styles.createButton}
+          onPress={() => navigation.navigate("Create Campaign")}
+        >
+          <Text style={styles.createButtonText}>+ İlan Oluştur</Text>
+        </TouchableOpacity>
+
+        {/* Arama Kutusu */}
         <TextInput
           placeholder="Marka veya kampanya ara..."
           placeholderTextColor="#ccc"
           style={styles.searchInput}
         />
 
-        <Text style={styles.sectionTitle}>Senin İçin Önerilenler</Text>
+        {/* Kampanya Listesi */}
+        <Text style={styles.sectionTitle}>Oluşturulan İlanlar</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #1</Text>
-          <Text style={styles.cardDesc}>Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!</Text>
-          <TouchableOpacity
-  style={styles.button}
-  onPress={() =>
-    navigation.navigate("CampaignDetail", {
-      title: "Kampanya #1",
-      description: "Ünlü bir markadan yüksek bütçeli işbirliği fırsatı!",
-    })
-  }
->
-  <Text style={styles.buttonText}>Detayları Gör</Text>
-</TouchableOpacity>
-        </View>
+        {campaigns.length === 0 ? (
+          <Text style={styles.noCampaignText}>Henüz ilan yok.</Text>
+        ) : (
+          campaigns.map((campaign, index) => (
+            <View key={index} style={styles.card}>
+              <Text style={styles.cardTitle}>{campaign.title}</Text>
+              <Text style={styles.cardDesc}>{campaign.description}</Text>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Kampanya #2</Text>
-          <Text style={styles.cardDesc}>Moda kategorisinde 5 işbirliği yayında!</Text>
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Detayları Gör</Text>
-          </TouchableOpacity>
-        </View>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() =>
+                  navigation.navigate("CampaignDetail", {
+                    title: campaign.title,
+                    description: campaign.description,
+                    features: campaign.features || [],
+                  })
+                }
+              >
+                <Text style={styles.buttonText}>Detayları Gör</Text>
+              </TouchableOpacity>
+            </View>
+          ))
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -92,6 +88,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 20,
   },
+  createButton: {
+    backgroundColor: "#7c58c2",
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 25,
+  },
+  createButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   searchInput: {
     backgroundColor: "#2c2c2e",
     borderRadius: 10,
@@ -105,6 +113,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 15,
+  },
+  noCampaignText: {
+    color: "#888",
+    fontStyle: "italic",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
   card: {
     backgroundColor: "#323232",
