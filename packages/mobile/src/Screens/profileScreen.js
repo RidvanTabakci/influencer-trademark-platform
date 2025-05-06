@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 
 const ProfileScreen = ({ setIsLoggedIn }) => {
   const user = {
-    name: "Kayra",
-    email: "kayra@example.com",
+    name: "Rıdvan",
+    email: "ridvan@example.com",
   };
 
   const handleLogout = () => {
