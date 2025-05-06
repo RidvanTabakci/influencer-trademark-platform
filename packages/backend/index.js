@@ -19,8 +19,13 @@ mongoose
 app.get("/", (req, res) => {
   res.send("Backend Çalışıyor!");
 });
-const userRoutes = require("./routes/userRoutes"); 
+
+// Rotaları ekle
+const userRoutes = require("./routes/userRoutes");
+const campaignRoutes = require("./routes/campaignRoutes");
+
 app.use("/api/users", userRoutes);
+app.use("/api/campaigns", campaignRoutes);
 
 // Sunucuyu başlat
 const PORT = process.env.PORT || 5001;
