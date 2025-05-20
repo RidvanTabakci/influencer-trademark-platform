@@ -53,18 +53,28 @@ const HomeScreen = () => {
             </p>
           </div>
           <div className="flex items-center space-x-4">
+            {user?.role === 'influencer' && (
+              <button
+                onClick={() => navigate('/applied-campaigns')}
+                className="bg-[#2c2c2e] text-white rounded-lg px-6 py-3 font-bold hover:bg-[#3c3c3e] focus:outline-none focus:ring-2 focus:ring-[#6a4ba3]"
+              >
+                Başvurduğum Kampanyalar
+              </button>
+            )}
             <button
               onClick={() => navigate('/profile')}
               className="bg-[#2c2c2e] text-white rounded-lg px-6 py-3 font-bold hover:bg-[#3c3c3e] focus:outline-none focus:ring-2 focus:ring-[#6a4ba3]"
             >
               Profil
             </button>
-            <button
-              onClick={() => navigate('/create-campaign')}
-              className="bg-[#7c58c2] text-white rounded-lg px-6 py-3 font-bold hover:bg-[#6a4ba3] focus:outline-none focus:ring-2 focus:ring-[#6a4ba3]"
-            >
-              Yeni Kampanya
-            </button>
+            {user?.role === 'brand' && (
+              <button
+                onClick={() => navigate('/create-campaign')}
+                className="bg-[#7c58c2] text-white rounded-lg px-6 py-3 font-bold hover:bg-[#6a4ba3] focus:outline-none focus:ring-2 focus:ring-[#6a4ba3]"
+              >
+                Yeni Kampanya
+              </button>
+            )}
           </div>
         </div>
 
@@ -120,7 +130,7 @@ const HomeScreen = () => {
                     </div>
                   </div>
                   <Link
-                    to={`/campaign/${campaign._id}`}
+                    to={`/campaigns/${campaign._id}`}
                     className="text-[#7c58c2] hover:text-[#6a4ba3]"
                   >
                     Detayları Gör

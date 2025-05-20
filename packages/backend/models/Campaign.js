@@ -16,7 +16,24 @@ const CampaignSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
-    }
+    },
+    applications: [{
+      influencer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+      status: {
+        type: String,
+        enum: ['Beklemede', 'Kabul Edildi', 'Reddedildi'],
+        default: 'Beklemede'
+      },
+      message: String,
+      appliedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }]
   },
   { timestamps: true }
 );

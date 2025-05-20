@@ -1,68 +1,139 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import axios from "axios";
-import API_URL from "../config";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const LoginScreen = ({ navigation, setIsLoggedIn }) => {
+const LoginScreen = () => {
+  const navigation = useNavigation();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Hata", "Lütfen tüm alanları doldurun!");
+      Alert.alert("Hata", "Lütfen email ve şifrenizi girin");
       return;
     }
 
+    setLoading(true);
     try {
-      const response = await axios.post(`${API_URL}/api/users/login`, { email, password });
-      Alert.alert("Başarılı", "Giriş yapıldı!");
-      console.log("Token:", response.data.token);
-
-      setIsLoggedIn(true); // Kullanıcıyı uygulamaya al
+      await login(email, password);
+      navigation.replace('Main');
     } catch (error) {
-      Alert.alert("Hata", error.response?.data?.error || "Giriş başarısız!");
+      Alert.alert("Giriş Hatası", error.response?.data?.error || "Giriş yapılırken bir hata oluştu");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Giriş Yap</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Hoş Geldiniz</Text>
+        <Text style={styles.subtitle}>Hesabınıza giriş yapın</Text>
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        placeholderTextColor="#ccc"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#666"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          editable={!loading}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Şifre"
-        placeholderTextColor="#ccc"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Şifre"
+          placeholderTextColor="#666"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          editable={!loading}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Giriş Yap</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Giriş Yap</Text>
+          )}
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={{ color: "#aaa", marginTop: 15 }}>Hesabın yok mu? Kayıt Ol</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.linkButton}
+          onPress={() => navigation.navigate('Register')}
+          disabled={loading}
+        >
+          <Text style={styles.linkText}>Hesabınız yok mu? Kayıt olun</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#1c1c1e", justifyContent: "center", alignItems: "center", paddingHorizontal: 20 },
-  title: { fontSize: 22, fontWeight: "bold", color: "#fff", marginBottom: 20 },
-  input: { width: "100%", backgroundColor: "#7c58c2", padding: 15, borderRadius: 10, marginBottom: 15, color: "#fff", fontSize: 16 },
-  button: { backgroundColor: "#7c58c2", padding: 15, borderRadius: 10, alignItems: "center", width: "100%" },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  container: {
+    flex: 1,
+    backgroundColor: '#1c1c1e',
+    padding: 20,
+  },
+  header: {
+    marginTop: 60,
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+  },
+  form: {
+    gap: 16,
+  },
+  input: {
+    backgroundColor: '#2c2c2e',
+    borderRadius: 8,
+    padding: 16,
+    color: '#fff',
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#7c58c2',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  linkButton: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  linkText: {
+    color: '#7c58c2',
+    fontSize: 16,
+  },
 });
 
 export default LoginScreen;

@@ -28,6 +28,34 @@
         }
       }
     },
+    "@react-native-picker/picker": {
+      "root": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/@react-native-picker/picker",
+      "name": "@react-native-picker/picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/@react-native-picker/picker/RNCPicker.podspec",
+          "version": "2.11.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/@react-native-picker/picker/android",
+          "packageImportPath": "import com.reactnativecommunity.picker.RNCPickerPackage;",
+          "packageInstance": "new RNCPickerPackage()",
+          "buildTypes": [],
+          "libraryName": "rnpicker",
+          "componentDescriptors": [
+            "RNCAndroidDialogPickerComponentDescriptor",
+            "RNCAndroidDropdownPickerComponentDescriptor"
+          ],
+          "cmakeListsPath": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-gesture-handler": {
       "root": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-gesture-handler",
       "name": "react-native-gesture-handler",
@@ -114,6 +142,31 @@
             "RNSModalScreenComponentDescriptor"
           ],
           "cmakeListsPath": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
+    "react-native-vector-icons": {
+      "root": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-vector-icons",
+      "name": "react-native-vector-icons",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-vector-icons/RNVectorIcons.podspec",
+          "version": "10.2.0",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-vector-icons/android",
+          "packageImportPath": "import com.oblador.vectoricons.VectorIconsPackage;",
+          "packageInstance": "new VectorIconsPackage()",
+          "buildTypes": [],
+          "libraryName": "RNVectorIconsSpec",
+          "componentDescriptors": [],
+          "cmakeListsPath": "/Users/ridvan/Documents/GitHub/influencer-trademark-platform/packages/mobile/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/CMakeLists.txt",
           "cxxModuleCMakeListsModuleName": null,
           "cxxModuleCMakeListsPath": null,
           "cxxModuleHeaderName": null,

@@ -8,16 +8,25 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Sayfa yüklendiğinde kullanıcı bilgisini kontrol et
-    const currentUser = authService.getCurrentUser();
-    setUser(currentUser);
-    setLoading(false);
+    const fetchUser = async () => {
+      try {
+        const userData = await authService.getMe(); // 🔥 sunucudan eksiksiz kullanıcı verisi çek
+        setUser(userData);
+      } catch (err) {
+        console.error('Kullanıcı bilgisi alınamadı:', err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser(); // Sayfa açılışında kullanıcıyı yükle
   }, []);
 
   const login = async (email, password) => {
-    const data = await authService.login(email, password);
-    setUser(data.user);
-    return data;
+    const response = await authService.login(email, password);
+    setUser(response.user);
+    return response;
   };
 
   const register = async (userData) => {
@@ -30,12 +39,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const updateUser = (updatedUserData) => {
+    setUser(updatedUserData);
+  };
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    updateUser,
     isAuthenticated: authService.isAuthenticated,
   };
 
@@ -52,4 +66,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

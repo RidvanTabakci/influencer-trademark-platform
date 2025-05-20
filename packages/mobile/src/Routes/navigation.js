@@ -1,65 +1,112 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { AuthProvider } from '../contexts/AuthContext';
 
-import HomeScreen from '../Screens/homeScreen';
-import {ProfileScreen} from '../Screens/profileScreen';
-import { New } from '../Screens/new';
-import RegisterScreen from '../Screens/RegisterScreen';
+// Screens
 import LoginScreen from '../Screens/LoginScreen';
+import RegisterScreen from '../Screens/RegisterScreen';
+import ProfileScreen from '../Screens/profileScreen';
+import CampaignListScreen from '../Screens/CampaignListScreen';
+import CampaignDetailScreen from '../Screens/CampaignDetailScreen';
 import CreateCampaignScreen from '../Screens/CreateCampaignScreen';
+import EditCampaignScreen from '../Screens/EditCampaignScreen';
 
-const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-function HomeStack() {
+const MainTabs = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-      <Stack.Screen name="homeScreen" component={HomeScreen} />
-      <Stack.Screen name="New" component={New} />
-      <Stack.Screen name="Create Campaign" component={CreateCampaignScreen} options={{ title: "Kampanya Detayı" }} />
-    </Stack.Navigator>
+          if (route.name === 'Campaigns') {
+            iconName = focused ? 'list' : 'list-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#7c58c2',
+        tabBarInactiveTintColor: '#666',
+        tabBarStyle: {
+          backgroundColor: '#1c1c1e',
+          borderTopColor: '#2c2c2e',
+        },
+        headerStyle: {
+          backgroundColor: '#1c1c1e',
+        },
+        headerTintColor: '#fff',
+      })}
+    >
+      <Tab.Screen
+        name="Campaigns"
+        component={CampaignListScreen}
+        options={{ title: 'Kampanyalar' }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ title: 'Profil' }}
+      />
+    </Tab.Navigator>
   );
-}
+};
 
-function RootTabs({ setIsLoggedIn }) {
-    return (
-<Tab.Navigator
-  screenOptions={{
-    tabBarStyle: { backgroundColor: '#1c1c1e', borderTopColor: '#333' },
-    tabBarActiveTintColor: '#7c58c2',
-    tabBarInactiveTintColor: '#aaa',
-    headerShown: false,
-  }}
->
-        <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
-        <Tab.Screen name="Profile">
-          {props => <ProfileScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
-        </Tab.Screen>
-      </Tab.Navigator>
-    );
-  }
-  
-
-export default function Navigation() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+const Navigation = () => {
   return (
-    <NavigationContainer>
-    {isLoggedIn ? (
-      <RootTabs setIsLoggedIn={setIsLoggedIn} />  // ✅ burada props geçiyoruz
-    ) : (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
-        </Stack.Screen>
-        <Stack.Screen name="Register">
-          {props => <RegisterScreen {...props} setIsLoggedIn={setIsLoggedIn} />}
-        </Stack.Screen>
-      </Stack.Navigator>
-    )}
-  </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: {
+              backgroundColor: '#1c1c1e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        >
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+            options={{ title: 'Kayıt Ol' }}
+          />
+          <Stack.Screen
+            name="Main"
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="CampaignDetail"
+            component={CampaignDetailScreen}
+            options={{ title: 'Kampanya Detayı' }}
+          />
+          <Stack.Screen
+            name="CreateCampaign"
+            component={CreateCampaignScreen}
+            options={{ title: 'Yeni Kampanya' }}
+          />
+          <Stack.Screen
+            name="EditCampaign"
+            component={EditCampaignScreen}
+            options={{ title: 'Kampanya Düzenle' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
-}
+};
+
+export default Navigation;

@@ -1,48 +1,62 @@
 // screens/CreateCampaignScreen.js
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import { campaignService } from '../services/api';
 
 const CreateCampaignScreen = () => {
   const navigation = useNavigation();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [featureInput, setFeatureInput] = useState("");
-  const [features, setFeatures] = useState([]);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    brand: '',
+    budget: '',
+    requirements: '',
+  });
+  const [loading, setLoading] = useState(false);
 
-  const addFeature = () => {
-    if (featureInput.trim() !== "") {
-      setFeatures([...features, featureInput.trim()]);
-      setFeatureInput("");
-    }
+  const handleChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const removeFeature = (index) => {
-    const newFeatures = [...features];
-    newFeatures.splice(index, 1);
-    setFeatures(newFeatures);
-  };
-
-  const handleCreateCampaign = () => {
-    if (title.trim() === "" || description.trim() === "") {
-      Alert.alert("Eksik Bilgi", "Lütfen başlık ve açıklamayı doldurun.");
+  const handleSubmit = async () => {
+    // Form validasyonu
+    if (!formData.title || !formData.description || !formData.brand || !formData.budget || !formData.requirements) {
+      Alert.alert('Hata', 'Lütfen tüm alanları doldurun');
       return;
     }
-  
-    const campaignData = {
-      title,
-      description,
-      features,
-    };
-  
-    console.log("Oluşturulan İlan:", campaignData);
-  
-    Alert.alert("Başarılı", "İlan başarıyla oluşturuldu!");
-  
-    // Burada Home ekranına yeni kampanyayı gönderiyoruz
-    navigation.navigate("Home", { newCampaign: campaignData });
+
+    // Bütçe kontrolü
+    if (isNaN(formData.budget) || Number(formData.budget) <= 0) {
+      Alert.alert('Hata', 'Lütfen geçerli bir bütçe girin');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const campaignData = {
+        ...formData,
+        budget: Number(formData.budget),
+      };
+
+      await campaignService.createCampaign(campaignData);
+      Alert.alert('Başarılı', 'Kampanya başarıyla oluşturuldu', [
+        {
+          text: 'Tamam',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('Hata', error.response?.data?.error || 'Kampanya oluşturulurken bir hata oluştu');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,56 +70,74 @@ const CreateCampaignScreen = () => {
         {/* Başlık Input */}
         <Text style={styles.label}>Başlık</Text>
         <TextInput
-          value={title}
-          onChangeText={setTitle}
+          value={formData.title}
+          onChangeText={(value) => handleChange('title', value)}
           placeholder="Kampanya başlığı girin"
           placeholderTextColor="#888"
           style={styles.input}
+          editable={!loading}
         />
 
         {/* Açıklama Input */}
         <Text style={styles.label}>Açıklama</Text>
         <TextInput
-          value={description}
-          onChangeText={setDescription}
+          value={formData.description}
+          onChangeText={(value) => handleChange('description', value)}
           placeholder="Kampanya açıklaması girin"
           placeholderTextColor="#888"
           style={[styles.input, { height: 100, textAlignVertical: "top" }]}
           multiline
+          numberOfLines={4}
+          editable={!loading}
         />
 
-        {/* Aranan Özellikler */}
-        <Text style={styles.label}>Aranan Influencer Özellikleri</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            value={featureInput}
-            onChangeText={setFeatureInput}
-            placeholder="Özellik ekle (örn: 10k+ takipçi)"
-            placeholderTextColor="#888"
-            style={styles.input}
-          />
-          <TouchableOpacity style={styles.addButton} onPress={addFeature}>
-            <Text style={styles.addButtonText}>Ekle</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Marka Input */}
+        <Text style={styles.label}>Marka</Text>
+        <TextInput
+          value={formData.brand}
+          onChangeText={(value) => handleChange('brand', value)}
+          placeholder="Marka adı"
+          placeholderTextColor="#888"
+          style={styles.input}
+          editable={!loading}
+        />
 
-        {/* Özellik Listesi */}
-        {features.length > 0 ? (
-          features.map((feature, index) => (
-            <View key={index} style={styles.featureItem}>
-              <Text style={styles.featureText}>{feature}</Text>
-              <TouchableOpacity onPress={() => removeFeature(index)}>
-                <Text style={styles.removeButtonText}>✕</Text>
-              </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <Text style={styles.noFeaturesText}>Henüz özellik eklenmedi.</Text>
-        )}
+        {/* Bütçe Input */}
+        <Text style={styles.label}>Bütçe (TL)</Text>
+        <TextInput
+          value={formData.budget}
+          onChangeText={(value) => handleChange('budget', value)}
+          placeholder="Örn: 1000"
+          placeholderTextColor="#888"
+          style={styles.input}
+          keyboardType="numeric"
+          editable={!loading}
+        />
+
+        {/* Gereksinimler Input */}
+        <Text style={styles.label}>Gereksinimler</Text>
+        <TextInput
+          value={formData.requirements}
+          onChangeText={(value) => handleChange('requirements', value)}
+          placeholder="Kampanya için gerekli şartları belirtin"
+          placeholderTextColor="#888"
+          style={[styles.input, { height: 100, textAlignVertical: "top" }]}
+          multiline
+          numberOfLines={4}
+          editable={!loading}
+        />
 
         {/* İlanı Oluştur Butonu */}
-        <TouchableOpacity style={styles.createButton} onPress={handleCreateCampaign}>
-          <Text style={styles.createButtonText}>İlanı Oluştur</Text>
+        <TouchableOpacity
+          style={[styles.createButton, loading && styles.createButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.createButtonText}>İlanı Oluştur</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -140,49 +172,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     height: 40,
   },
-  inputContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  addButton: {
-    marginLeft: 10,
-    backgroundColor: "#7c58c2",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  featureItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#2c2c2e",
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  featureText: {
-    color: "#fff",
-    flex: 1,
-  },
-  removeButtonText: {
-    color: "#ff6b6b",
-    fontWeight: "bold",
-    marginLeft: 10,
-  },
-  noFeaturesText: {
-    color: "#888",
-    fontStyle: "italic",
-  },
   createButton: {
     backgroundColor: "#7c58c2",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
+  },
+  createButtonDisabled: {
+    opacity: 0.7,
   },
   createButtonText: {
     color: "#fff",

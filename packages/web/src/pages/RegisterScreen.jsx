@@ -9,6 +9,7 @@ const RegisterScreen = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'influencer'
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,7 @@ const RegisterScreen = () => {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: formData.role
       });
       navigate('/login', { 
         state: { message: 'Kayıt başarılı! Giriş yapabilirsiniz.' }
@@ -141,6 +143,36 @@ const RegisterScreen = () => {
                 onChange={handleChange}
                 disabled={loading}
               />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 mb-2">
+                Hesap Türü
+              </label>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                    formData.role === 'influencer'
+                      ? 'bg-[#7c58c2] text-white border-[#7c58c2]'
+                      : 'bg-[#2c2c2e] text-white border-gray-700 hover:bg-[#3c3c3e]'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'influencer' }))}
+                >
+                  İçerik Üreticisi
+                </button>
+                <button
+                  type="button"
+                  className={`py-2 px-4 border rounded-md text-sm font-medium ${
+                    formData.role === 'brand'
+                      ? 'bg-[#7c58c2] text-white border-[#7c58c2]'
+                      : 'bg-[#2c2c2e] text-white border-gray-700 hover:bg-[#3c3c3e]'
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'brand' }))}
+                >
+                  Marka
+                </button>
+              </div>
             </div>
           </div>
 
