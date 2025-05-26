@@ -123,7 +123,7 @@ router.put("/profile", auth, async (req, res) => {
   try {
     const updates = req.body;
     const allowedUpdates = ['name', 'email', 'password'];
-    
+
     // Rol bazlı profil güncellemeleri
     if (req.user.role === 'brand') {
       allowedUpdates.push('brandProfile');
@@ -133,7 +133,20 @@ router.put("/profile", auth, async (req, res) => {
 
     Object.keys(updates).forEach(update => {
       if (allowedUpdates.includes(update)) {
-        req.user[update] = updates[update];
+        // Eğer profil güncellemesi ise, alt alanları merge et
+        if (update === 'brandProfile' && typeof updates.brandProfile === 'object') {
+          req.user.brandProfile = {
+            ...req.user.brandProfile,
+            ...updates.brandProfile
+          };
+        } else if (update === 'influencerProfile' && typeof updates.influencerProfile === 'object') {
+          req.user.influencerProfile = {
+            ...req.user.influencerProfile,
+            ...updates.influencerProfile
+          };
+        } else {
+          req.user[update] = updates[update];
+        }
       }
     });
 

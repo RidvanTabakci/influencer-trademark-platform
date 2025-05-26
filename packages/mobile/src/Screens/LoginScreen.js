@@ -31,31 +31,37 @@ const LoginScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Hoş Geldiniz</Text>
-        <Text style={styles.subtitle}>Hesabınıza giriş yapın</Text>
+        <Text style={styles.title}>Giriş Yap</Text>
+        <Text style={styles.subtitle}>Hesabınıza giriş yapın ve kampanyalara başlayın</Text>
       </View>
 
       <View style={styles.form}>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#666"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          editable={!loading}
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="ornek@email.com"
+            placeholderTextColor="#666"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!loading}
+          />
+        </View>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Şifre"
-          placeholderTextColor="#666"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          editable={!loading}
-        />
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Şifre</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Şifrenizi girin"
+            placeholderTextColor="#666"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            editable={!loading}
+          />
+        </View>
 
         <TouchableOpacity
           style={[styles.button, loading && styles.buttonDisabled]}
@@ -96,16 +102,26 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 8,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
+    textAlign: 'center',
   },
   form: {
     gap: 16,
   },
+  inputContainer: {
+    marginBottom: 16,
+  },
+  label: {
+    color: '#fff',
+    marginBottom: 8,
+    fontSize: 16,
+  },
   input: {
-    backgroundColor: '#2c2c2e',
+    backgroundColor: '#7c58c2',
     borderRadius: 8,
     padding: 16,
     color: '#fff',

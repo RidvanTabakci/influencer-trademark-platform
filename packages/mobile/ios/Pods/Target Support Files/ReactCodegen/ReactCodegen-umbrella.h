@@ -41,8 +41,12 @@
 #import "rnasyncstorageJSI.h"
 #import "rngesturehandler_codegen/rngesturehandler_codegen.h"
 #import "rngesturehandler_codegenJSI.h"
+#import "RNImagePickerSpec/RNImagePickerSpec.h"
+#import "RNImagePickerSpecJSI.h"
 #import "rnscreens/rnscreens.h"
 #import "rnscreensJSI.h"
+#import "RNVectorIconsSpec/RNVectorIconsSpec.h"
+#import "RNVectorIconsSpecJSI.h"
 #import "safeareacontext/safeareacontext.h"
 #import "safeareacontextJSI.h"
 

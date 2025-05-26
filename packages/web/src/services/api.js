@@ -13,11 +13,43 @@ const api = axios.create({
 // Her istek öncesi token ekle
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+  console.log('Axios Request Config:', {
+    url: config.url,
+    method: config.method,
+    headers: config.headers,
+    data: config.data,
+    token: token
+  });
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+}, (error) => {
+  console.error('Axios Request Error:', error);
+  return Promise.reject(error);
 });
+
+// Response interceptor ekle
+api.interceptors.response.use(
+  (response) => {
+    console.log('Axios Response:', {
+      status: response.status,
+      data: response.data,
+      headers: response.headers
+    });
+    return response;
+  },
+  (error) => {
+    console.error('Axios Response Error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message,
+      config: error.config
+    });
+    return Promise.reject(error);
+  }
+);
 
 // ------------------ Auth Servisi ------------------ //
 export const authService = {
@@ -64,6 +96,11 @@ export const authService = {
     return response.data;
   },
 
+  updateUserProfile: async (userData) => {
+    // Alias for updateProfile for compatibility with ProfileScreen
+    return await authService.updateProfile(userData);
+  },
+
   updateInfluencerProfile: async (profileData) => {
     const response = await api.put('/users/influencer-profile', {
       influencerProfile: {
@@ -87,6 +124,11 @@ export const authService = {
 
   getUserProfile: async (userId) => {
     const response = await api.get(`/users/${userId}`);
+    return response.data;
+  },
+
+  analyzeProfile: async (profile) => {
+    const response = await api.post('/ai/analyze-profile', { profile });
     return response.data;
   },
 
@@ -137,6 +179,11 @@ export const campaignService = {
 
   updateApplicationStatus: async (campaignId, applicationId, statusData) => {
     const response = await api.put(`/campaigns/${campaignId}/applications/${applicationId}`, statusData);
+    return response.data;
+  },
+
+  analyzeApplications: async (campaignId) => {
+    const response = await api.get(`/campaigns/${campaignId}/analyze-applications`);
     return response.data;
   }
 };

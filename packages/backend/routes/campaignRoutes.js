@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Campaign = require("../models/Campaign");
 const { auth, checkRole, checkPermission } = require("../middleware/auth");
+const { analyzeInfluencers } = require('../services/geminiService');
 
 // Tüm kampanyaları getir
 router.get("/", auth, checkPermission('view_campaigns'), async (req, res) => {
@@ -224,6 +225,49 @@ router.put("/:id/applications/:applicationId", auth, async (req, res) => {
     res.json({ message: "Başvuru durumu güncellendi!", application });
   } catch (error) {
     res.status(500).json({ error: "Sunucu hatası!" });
+  }
+});
+
+// New route for AI analysis of applications
+router.get('/:campaignId/analyze-applications', auth, async (req, res) => {
+  try {
+    const campaign = await Campaign.findById(req.params.campaignId)
+      .populate({
+        path: 'applications',
+        populate: {
+          path: 'influencer',
+          populate: {
+            path: 'influencerProfile'
+          }
+        }
+      });
+
+    if (!campaign) {
+      return res.status(404).json({ error: 'Kampanya bulunamadı' });
+    }
+
+    // Check if user is authorized (campaign owner or admin)
+    const isOwner = req.user.role === 'admin' || 
+                   (req.user.role === 'brand' && campaign.creator.toString() === req.user._id.toString());
+    
+    if (!isOwner) {
+      return res.status(403).json({ error: 'Bu işlem için yetkiniz yok' });
+    }
+
+    // Get only pending applications for analysis
+    const pendingApplications = campaign.applications.filter(app => app.status === 'Beklemede');
+
+    if (pendingApplications.length === 0) {
+      return res.status(400).json({ error: 'Analiz edilecek bekleyen başvuru bulunmuyor' });
+    }
+
+    // Call the AI analysis service
+    const analysis = await analyzeInfluencers(campaign, pendingApplications);
+    
+    res.json({ analysis });
+  } catch (error) {
+    console.error('Error in AI analysis:', error);
+    res.status(500).json({ error: 'AI analizi sırasında bir hata oluştu' });
   }
 });
 

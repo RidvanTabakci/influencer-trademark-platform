@@ -2,17 +2,20 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Image } from 'react-native';
 import { AuthProvider } from '../contexts/AuthContext';
 
 // Screens
 import LoginScreen from '../Screens/LoginScreen';
 import RegisterScreen from '../Screens/RegisterScreen';
 import ProfileScreen from '../Screens/profileScreen';
+import UserProfileScreen from '../Screens/UserProfileScreen';
 import CampaignListScreen from '../Screens/CampaignListScreen';
 import CampaignDetailScreen from '../Screens/CampaignDetailScreen';
 import CreateCampaignScreen from '../Screens/CreateCampaignScreen';
 import EditCampaignScreen from '../Screens/EditCampaignScreen';
+import HomeIcon from '../Assets/icons/home.png';
+import UserIcon from '../Assets/icons/user.png';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -22,15 +25,24 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
+          let iconSource;
           if (route.name === 'Campaigns') {
-            iconName = focused ? 'list' : 'list-outline';
+            iconSource = HomeIcon;
           } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
+            iconSource = UserIcon;
           }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <Image
+              source={iconSource}
+              style={{
+                width: size,
+                height: size,
+                tintColor: color,
+                opacity: focused ? 1 : 0.7,
+              }}
+              resizeMode="contain"
+            />
+          );
         },
         tabBarActiveTintColor: '#7c58c2',
         tabBarInactiveTintColor: '#666',
@@ -102,6 +114,11 @@ const Navigation = () => {
             name="EditCampaign"
             component={EditCampaignScreen}
             options={{ title: 'Kampanya Düzenle' }}
+          />
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfileScreen}
+            options={{ title: 'Kullanıcı Profili' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

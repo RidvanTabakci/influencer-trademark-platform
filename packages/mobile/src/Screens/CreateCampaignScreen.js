@@ -5,6 +5,36 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { campaignService } from '../services/api';
 
+const RequirementCard = ({ requirement, onUpdate, onDelete, onTypeChange }) => {
+  return (
+    <View style={styles.requirementCard}>
+      <View style={styles.requirementHeader}>
+        {requirement.type === 'Özel' ? (
+          <TextInput
+            value={requirement.type}
+            onChangeText={(text) => onTypeChange(requirement.id, text)}
+            placeholder="Gereksinim türü"
+            placeholderTextColor="#888"
+            style={[styles.requirementTitle, { flex: 1, marginRight: 8 }]}
+          />
+        ) : (
+          <Text style={styles.requirementTitle}>{requirement.type}</Text>
+        )}
+        <TouchableOpacity onPress={onDelete}>
+          <Text style={styles.deleteButton}>Sil</Text>
+        </TouchableOpacity>
+      </View>
+      <TextInput
+        value={requirement.value}
+        onChangeText={(value) => onUpdate(requirement.id, value)}
+        placeholder={`${requirement.type} değerini girin`}
+        placeholderTextColor="#888"
+        style={styles.requirementInput}
+      />
+    </View>
+  );
+};
+
 const CreateCampaignScreen = () => {
   const navigation = useNavigation();
 
@@ -13,8 +43,9 @@ const CreateCampaignScreen = () => {
     description: '',
     brand: '',
     budget: '',
-    requirements: '',
   });
+
+  const [requirements, setRequirements] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (name, value) => {
@@ -24,25 +55,66 @@ const CreateCampaignScreen = () => {
     }));
   };
 
+  const addRequirement = (type) => {
+    const newRequirement = {
+      id: Date.now().toString(),
+      type,
+      value: '',
+    };
+    setRequirements([...requirements, newRequirement]);
+  };
+
+  const updateRequirement = (id, value) => {
+    setRequirements(requirements.map(req => 
+      req.id === id ? { ...req, value } : req
+    ));
+  };
+
+  const deleteRequirement = (id) => {
+    setRequirements(requirements.filter(req => req.id !== id));
+  };
+
+  const addCustomRequirement = () => {
+    const newRequirement = {
+      id: Date.now().toString(),
+      type: 'Özel',
+      value: '',
+    };
+    setRequirements([...requirements, newRequirement]);
+  };
+
+  const handleTypeChange = (id, newType) => {
+    setRequirements(requirements.map(req => req.id === id ? { ...req, type: newType } : req));
+  };
+
   const handleSubmit = async () => {
-    // Form validasyonu
-    if (!formData.title || !formData.description || !formData.brand || !formData.budget || !formData.requirements) {
+    if (!formData.title || !formData.description || !formData.brand || !formData.budget) {
       Alert.alert('Hata', 'Lütfen tüm alanları doldurun');
       return;
     }
 
-    // Bütçe kontrolü
     if (isNaN(formData.budget) || Number(formData.budget) <= 0) {
       Alert.alert('Hata', 'Lütfen geçerli bir bütçe girin');
+      return;
+    }
+
+    if (requirements.length === 0) {
+      Alert.alert('Hata', 'Lütfen en az bir gereksinim ekleyin');
       return;
     }
 
     setLoading(true);
 
     try {
+      // Convert requirements array to string format
+      const requirementsString = requirements
+        .map(req => `${req.type}: ${req.value}`)
+        .join('\n');
+
       const campaignData = {
         ...formData,
         budget: Number(formData.budget),
+        requirements: requirementsString
       };
 
       await campaignService.createCampaign(campaignData);
@@ -61,13 +133,7 @@ const CreateCampaignScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Geri Tuşu */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>← Geri</Text>
-        </TouchableOpacity>
-
-        {/* Başlık Input */}
+      <ScrollView style={styles.container1}>
         <Text style={styles.label}>Başlık</Text>
         <TextInput
           value={formData.title}
@@ -78,7 +144,6 @@ const CreateCampaignScreen = () => {
           editable={!loading}
         />
 
-        {/* Açıklama Input */}
         <Text style={styles.label}>Açıklama</Text>
         <TextInput
           value={formData.description}
@@ -91,7 +156,6 @@ const CreateCampaignScreen = () => {
           editable={!loading}
         />
 
-        {/* Marka Input */}
         <Text style={styles.label}>Marka</Text>
         <TextInput
           value={formData.brand}
@@ -102,7 +166,6 @@ const CreateCampaignScreen = () => {
           editable={!loading}
         />
 
-        {/* Bütçe Input */}
         <Text style={styles.label}>Bütçe (TL)</Text>
         <TextInput
           value={formData.budget}
@@ -114,20 +177,43 @@ const CreateCampaignScreen = () => {
           editable={!loading}
         />
 
-        {/* Gereksinimler Input */}
         <Text style={styles.label}>Gereksinimler</Text>
-        <TextInput
-          value={formData.requirements}
-          onChangeText={(value) => handleChange('requirements', value)}
-          placeholder="Kampanya için gerekli şartları belirtin"
-          placeholderTextColor="#888"
-          style={[styles.input, { height: 100, textAlignVertical: "top" }]}
-          multiline
-          numberOfLines={4}
-          editable={!loading}
-        />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+          <View style={styles.requirementButtons}>
+            <TouchableOpacity 
+              style={styles.addRequirementButton}
+              onPress={() => addRequirement('Cinsiyet')}
+            >
+              <Text style={styles.addRequirementButtonText}>Cinsiyet Ekle</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.addRequirementButton}
+              onPress={() => addRequirement('Minimum Takipçi')}
+            >
+              <Text style={styles.addRequirementButtonText}>Takipçi Sayısı Ekle</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.addRequirementButton}
+              onPress={() => addRequirement('Yaş Aralığı')}
+            >
+              <Text style={styles.addRequirementButtonText}>Yaş Aralığı Ekle</Text>
+            </TouchableOpacity>
+          </View>
+          
+        </View><TouchableOpacity onPress={addCustomRequirement} style={{ backgroundColor: '#7c58c2', borderRadius: 20, width: 36, height: 36, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ color: '#fff', fontSize: 24, fontWeight: 'bold' }}>+</Text>
+          </TouchableOpacity></ScrollView>
+        {requirements.map((requirement) => (
+          <RequirementCard
+            key={requirement.id}
+            requirement={requirement}
+            onUpdate={updateRequirement}
+            onDelete={() => deleteRequirement(requirement.id)}
+            onTypeChange={handleTypeChange}
+          />
+        ))}
 
-        {/* İlanı Oluştur Butonu */}
         <TouchableOpacity
           style={[styles.createButton, loading && styles.createButtonDisabled]}
           onPress={handleSubmit}
@@ -148,15 +234,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1c1c1e",
-    padding: 20,
   },
-  backButton: {
-    marginBottom: 20,
-  },
-  backButtonText: {
-    color: "#7c58c2",
-    fontSize: 16,
-    fontWeight: "bold",
+  container1: {
+    flex: 1,
+    backgroundColor: "#1c1c1e",
+    padding: 10,
   },
   label: {
     color: "#fff",
@@ -170,6 +252,50 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: "#fff",
     marginBottom: 20,
+    height: 40,
+  },
+  requirementButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 20,
+  },
+  addRequirementButton: {
+    backgroundColor: '#3c3c3e',
+    padding: 10,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  addRequirementButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
+  requirementCard: {
+    backgroundColor: '#2c2c2e',
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 15,
+  },
+  requirementHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  requirementTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  deleteButton: {
+    color: '#ff3b30',
+    fontSize: 14,
+  },
+  requirementInput: {
+    backgroundColor: '#3c3c3e',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    color: '#fff',
     height: 40,
   },
   createButton: {

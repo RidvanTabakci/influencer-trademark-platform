@@ -12,6 +12,7 @@ import EditCampaignScreen from './pages/EditCampaignScreen';
 import CampaignDetailsScreen from './pages/CampaignDetailsScreen';
 import AppliedCampaignsScreen from './pages/AppliedCampaignsScreen';
 
+
 // Korumalı Route bileşeni
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -104,7 +105,6 @@ const App = () => {
               }
             />
           </Routes>
-         
           
         </div>
       </Router>

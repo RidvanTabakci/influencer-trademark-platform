@@ -14,10 +14,14 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const userData = await authService.getCurrentUser();
-      setUser(userData);
+      const userData = await authService.getMe();
+      console.log('getMe userData:', userData);
+      if (userData) {
+        setUser({ ...userData, _id: String(userData._id) });
+      }
     } catch (error) {
       console.error('Error loading user:', error);
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -26,8 +30,41 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await authService.login(email, password);
-      setUser(response.user);
-      return response;
+      console.log('login response.user:', response.user);
+      
+      // Get complete user data after login
+      const userData = await authService.getMe();
+      
+      // Normalize user data
+      const normalizedUser = {
+        ...userData,
+        _id: String(userData._id || userData.id),
+        influencerProfile: {
+          bio: userData.influencerProfile?.bio || '',
+          highestFollowerCount: userData.influencerProfile?.highestFollowerCount || 0,
+          socialMedia: {
+            instagram: userData.influencerProfile?.socialMedia?.instagram || '',
+            youtube: userData.influencerProfile?.socialMedia?.youtube || '',
+            tiktok: userData.influencerProfile?.socialMedia?.tiktok || '',
+          },
+          categories: userData.influencerProfile?.categories || [],
+          location: userData.influencerProfile?.location || '',
+          website: userData.influencerProfile?.website || '',
+          profileImage: userData.influencerProfile?.profileImage || '',
+        },
+        brandProfile: {
+          companyName: userData.brandProfile?.companyName || '',
+          industry: userData.brandProfile?.industry || '',
+          website: userData.brandProfile?.website || '',
+          logo: userData.brandProfile?.logo || '',
+          description: userData.brandProfile?.description || '',
+        },
+        permissions: userData.permissions || [],
+        role: userData.role || 'influencer',
+      };
+      
+      setUser(normalizedUser);
+      return { ...response, user: normalizedUser };
     } catch (error) {
       throw error;
     }
@@ -51,12 +88,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (updatedUserData) => {
+    const normalizedUser = {
+      ...updatedUserData,
+      _id: String(updatedUserData._id),
+      influencerProfile: {
+        ...updatedUserData.influencerProfile,
+        socialMedia: {
+          instagram: updatedUserData.influencerProfile?.socialMedia?.instagram || '',
+          youtube: updatedUserData.influencerProfile?.socialMedia?.youtube || '',
+          tiktok: updatedUserData.influencerProfile?.socialMedia?.tiktok || '',
+        },
+        categories: updatedUserData.influencerProfile?.categories || [],
+        bio: updatedUserData.influencerProfile?.bio || '',
+        location: updatedUserData.influencerProfile?.location || '',
+        website: updatedUserData.influencerProfile?.website || '',
+        profileImage: updatedUserData.influencerProfile?.profileImage || '',
+        highestFollowerCount: updatedUserData.influencerProfile?.highestFollowerCount || 0,
+      },
+      brandProfile: {
+        ...updatedUserData.brandProfile,
+        companyName: updatedUserData.brandProfile?.companyName || '',
+        industry: updatedUserData.brandProfile?.industry || '',
+        website: updatedUserData.brandProfile?.website || '',
+        logo: updatedUserData.brandProfile?.logo || '',
+        description: updatedUserData.brandProfile?.description || '',
+      },
+      permissions: updatedUserData.permissions || [],
+      role: updatedUserData.role || 'influencer',
+    };
+    setUser(normalizedUser);
+  };
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    updateUser,
+    isAuthenticated: authService.isAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -18,6 +18,17 @@ const ProfileScreen = () => {
   });
   const [highestFollowerCount, setHighestFollowerCount] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [brandProfile, setBrandProfile] = useState({
+    companyName: '',
+    industry: '',
+    website: '',
+    description: ''
+  });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisError, setAnalysisError] = useState('');
 
   useEffect(() => {
     if (userId) {
@@ -27,12 +38,20 @@ const ProfileScreen = () => {
       // Use current user's data
       setUser(currentUser);
       setLoading(false);
+      setName(currentUser?.name || '');
+      setEmail(currentUser?.email || '');
       setSocialMedia({
         instagram: currentUser?.influencerProfile?.socialMedia?.instagram || '',
         youtube: currentUser?.influencerProfile?.socialMedia?.youtube || '',
         tiktok: currentUser?.influencerProfile?.socialMedia?.tiktok || ''
       });
       setHighestFollowerCount(currentUser?.influencerProfile?.highestFollowerCount || '');
+      setBrandProfile({
+        companyName: currentUser?.brandProfile?.companyName || '',
+        industry: currentUser?.brandProfile?.industry || '',
+        website: currentUser?.brandProfile?.website || '',
+        description: currentUser?.brandProfile?.description || ''
+      });
     }
   }, [userId, currentUser]);
 
@@ -46,6 +65,12 @@ const ProfileScreen = () => {
         tiktok: response.user?.influencerProfile?.socialMedia?.tiktok || ''
       });
       setHighestFollowerCount(response.user?.influencerProfile?.highestFollowerCount || '');
+      setBrandProfile({
+        companyName: response.user?.brandProfile?.companyName || '',
+        industry: response.user?.brandProfile?.industry || '',
+        website: response.user?.brandProfile?.website || '',
+        description: response.user?.brandProfile?.description || ''
+      });
     } catch (error) {
       setError('Kullanıcı profili yüklenirken bir hata oluştu');
     } finally {
@@ -60,44 +85,48 @@ const ProfileScreen = () => {
     }));
   };
 
-  const handleSaveSocialMedia = async () => {
+  const handleBrandProfileChange = (field, value) => {
+    setBrandProfile(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveProfile = async () => {
     try {
       setLoading(true);
       setError('');
-
-      // URL formatı kontrolü
-      const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/;
-      
-      if (socialMedia.instagram && !urlPattern.test(socialMedia.instagram)) {
-        setError('Geçersiz Instagram URL formatı. Örnek: https://www.instagram.com/kullaniciadi');
-        return;
+      const payload = {
+        name,
+        email,
+      };
+      if (user.role === 'brand') {
+        payload.brandProfile = {
+          companyName: brandProfile.companyName,
+          industry: brandProfile.industry,
+          website: brandProfile.website,
+          description: brandProfile.description,
+        };
       }
-      if (socialMedia.youtube && !urlPattern.test(socialMedia.youtube)) {
-        setError('Geçersiz YouTube URL formatı. Örnek: https://www.youtube.com/@kanaladi');
-        return;
+      if (user.role === 'influencer') {
+        payload.influencerProfile = {
+          socialMedia: {
+            instagram: socialMedia.instagram,
+            youtube: socialMedia.youtube,
+            tiktok: socialMedia.tiktok
+          },
+          highestFollowerCount: parseInt(highestFollowerCount) || 0,
+        };
       }
-      if (socialMedia.tiktok && !urlPattern.test(socialMedia.tiktok)) {
-        setError('Geçersiz TikTok URL formatı. Örnek: https://www.tiktok.com/@kullaniciadi');
-        return;
-      }
-
-      const response = await authService.updateInfluencerProfile({
-        socialMedia: {
-          instagram: socialMedia.instagram,
-          youtube: socialMedia.youtube,
-          tiktok: socialMedia.tiktok
-        },
-        highestFollowerCount: parseInt(highestFollowerCount) || 0
-      });
-      
+      const response = await authService.updateUserProfile(payload);
       if (response.user) {
         updateUser(response.user);
-        setError('');
+        setUser(response.user);
         setIsEditing(false);
+        setError('');
       }
     } catch (error) {
-      console.error('Sosyal medya güncellenirken hata:', error);
-      setError(error.response?.data?.error || 'Sosyal medya bilgileri kaydedilemedi');
+      setError(error.response?.data?.error || 'Profil bilgileri kaydedilemedi');
     } finally {
       setLoading(false);
     }
@@ -133,6 +162,19 @@ const ProfileScreen = () => {
     return permissionMap[permission] || permission;
   };
 
+  const handleAnalyzeProfile = async () => {
+    try {
+      setAnalyzing(true);
+      setAnalysisError('');
+      const response = await authService.analyzeProfile(user);
+      setAnalysisResult(response.analysis);
+    } catch (error) {
+      setAnalysisError(error.response?.data?.error || 'Profil analizi sırasında bir hata oluştu');
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center">
@@ -154,20 +196,103 @@ const ProfileScreen = () => {
       <div className="max-w-3xl mx-auto">
         <div className="bg-[#2c2c2e] rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-700">
-            <h2 className="text-2xl font-bold text-white">Profil</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">{user.name}</h2>
+              {currentUser?.role === 'brand' && user.role === 'influencer' && (
+                <button
+                  onClick={handleAnalyzeProfile}
+                  disabled={analyzing}
+                  className={`bg-[#7c58c2] text-white px-4 py-2 rounded-md hover:bg-[#8c68d2] focus:outline-none focus:ring-2 focus:ring-[#7c58c2] ${
+                    analyzing ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {analyzing ? 'Analiz Ediliyor...' : 'Profili Analiz Et'}
+                </button>
+              )}
+            </div>
+            <p className="text-gray-400 mt-2">{user.email}</p>
           </div>
+
+          {analysisResult && (
+            <div className="px-6 py-4 border-b border-gray-700">
+              <h3 className="text-lg font-medium text-white mb-2">Profil Analizi</h3>
+              <div className="space-y-3">
+                <div className="bg-[#3c3c3e] p-3 rounded-md">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-white font-medium">Doğruluk Oranı</h4>
+                    <span className="text-[#7c58c2]">{analysisResult.oran}%</span>
+                  </div>
+                  <p className="text-gray-300">{analysisResult.aciklama}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {analysisError && (
+            <div className="px-6 py-4 border-b border-gray-700">
+              <div className="bg-red-500 text-white p-3 rounded-lg">
+                {analysisError}
+              </div>
+            </div>
+          )}
 
           <div className="p-6 space-y-6">
             <div>
-              <h3 className="text-lg font-medium text-white mb-4">Kişisel Bilgiler</h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-white">Kişisel Bilgiler</h3>
+                {!userId && currentUser._id === user._id && !isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="text-[#7c58c2] hover:text-[#8c68d2] focus:outline-none"
+                  >
+                    Düzenle
+                  </button>
+                ) : !userId && currentUser._id === user._id && isEditing ? (
+                  <div className="space-x-2">
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="text-gray-400 hover:text-white focus:outline-none"
+                    >
+                      İptal
+                    </button>
+                    <button
+                      onClick={handleSaveProfile}
+                      disabled={loading}
+                      className="text-[#7c58c2] hover:text-[#8c68d2] focus:outline-none disabled:opacity-50"
+                    >
+                      Kaydet
+                    </button>
+                  </div>
+                ) : null}
+              </div>
               <div className="grid grid-cols-1 gap-4">
                 <div className="flex">
                   <span className="text-gray-400 w-32">Ad Soyad:</span>
-                  <span className="text-white">{user.name}</span>
+                  {isEditing && !userId && currentUser._id === user._id ? (
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="Ad Soyad"
+                      className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                    />
+                  ) : (
+                    <span className="text-white">{user.name}</span>
+                  )}
                 </div>
                 <div className="flex">
                   <span className="text-gray-400 w-32">E-posta:</span>
-                  <span className="text-white">{user.email}</span>
+                  {isEditing && !userId && currentUser._id === user._id ? (
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="E-posta"
+                      className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                    />
+                  ) : (
+                    <span className="text-white">{user.email}</span>
+                  )}
                 </div>
                 <div className="flex">
                   <span className="text-gray-400 w-32">Hesap Türü:</span>
@@ -192,40 +317,9 @@ const ProfileScreen = () => {
 
             {user.role === 'influencer' && (
               <div>
-                <div className="flex justify-between items-center mb-4">
+                <div className="mb-4 flex justify-between items-center">
                   <h3 className="text-lg font-medium text-white">Sosyal Medya Hesapları</h3>
-                  {!userId && currentUser._id === user._id && !isEditing ? (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="text-[#7c58c2] hover:text-[#8c68d2] focus:outline-none"
-                    >
-                      Düzenle
-                    </button>
-                  ) : !userId && currentUser._id === user._id && isEditing ? (
-                    <div className="space-x-2">
-                      <button
-                        onClick={() => setIsEditing(false)}
-                        className="text-gray-400 hover:text-white focus:outline-none"
-                      >
-                        İptal
-                      </button>
-                      <button
-                        onClick={handleSaveSocialMedia}
-                        disabled={loading}
-                        className="text-[#7c58c2] hover:text-[#8c68d2] focus:outline-none disabled:opacity-50"
-                      >
-                        Kaydet
-                      </button>
-                    </div>
-                  ) : null}
                 </div>
-                
-                {error && (
-                  <div className="bg-red-500 text-white p-3 rounded-lg mb-4">
-                    {error}
-                  </div>
-                )}
-
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <span className="text-white w-32">En Yüksek Takipçi:</span>
@@ -327,6 +421,101 @@ const ProfileScreen = () => {
                           </a>
                         ) : (
                           <span className="text-gray-400">TikTok hesabı eklenmemiş</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {user.role === 'brand' && (
+              <div>
+                <div className="mb-4">
+                  <h3 className="text-lg font-medium text-white">Marka Bilgileri</h3>
+                </div>
+                {error && (
+                  <div className="bg-red-500 text-white p-3 rounded-lg mb-4">
+                    {error}
+                  </div>
+                )}
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-white w-32">Şirket Adı:</span>
+                    {isEditing && currentUser._id === user._id ? (
+                      <input
+                        type="text"
+                        value={brandProfile.companyName}
+                        onChange={e => handleBrandProfileChange('companyName', e.target.value)}
+                        placeholder="Şirket Adı"
+                        className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                      />
+                    ) : (
+                      <div className="flex-1">
+                        {brandProfile.companyName ? (
+                          <span className="text-white">{brandProfile.companyName}</span>
+                        ) : (
+                          <span className="text-gray-400">Şirket adı girilmemiş</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-white w-32">Sektör:</span>
+                    {isEditing && currentUser._id === user._id ? (
+                      <input
+                        type="text"
+                        value={brandProfile.industry}
+                        onChange={e => handleBrandProfileChange('industry', e.target.value)}
+                        placeholder="Sektör"
+                        className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                      />
+                    ) : (
+                      <div className="flex-1">
+                        {brandProfile.industry ? (
+                          <span className="text-white">{brandProfile.industry}</span>
+                        ) : (
+                          <span className="text-gray-400">Sektör girilmemiş</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-white w-32">Web Sitesi:</span>
+                    {isEditing && currentUser._id === user._id ? (
+                      <input
+                        type="text"
+                        value={brandProfile.website}
+                        onChange={e => handleBrandProfileChange('website', e.target.value)}
+                        placeholder="Web Sitesi"
+                        className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                      />
+                    ) : (
+                      <div className="flex-1">
+                        {brandProfile.website ? (
+                          <a href={brandProfile.website} target="_blank" rel="noopener noreferrer" className="text-[#7c58c2] hover:text-[#8c68d2]">{brandProfile.website}</a>
+                        ) : (
+                          <span className="text-gray-400">Web sitesi girilmemiş</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-white w-32">Açıklama:</span>
+                    {isEditing && currentUser._id === user._id ? (
+                      <input
+                        type="text"
+                        value={brandProfile.description}
+                        onChange={e => handleBrandProfileChange('description', e.target.value)}
+                        placeholder="Açıklama"
+                        className="flex-1 bg-[#3c3c3e] text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7c58c2]"
+                      />
+                    ) : (
+                      <div className="flex-1">
+                        {brandProfile.description ? (
+                          <span className="text-white">{brandProfile.description}</span>
+                        ) : (
+                          <span className="text-gray-400">Açıklama girilmemiş</span>
                         )}
                       </div>
                     )}

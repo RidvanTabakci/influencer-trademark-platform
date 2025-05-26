@@ -23,9 +23,11 @@ app.get("/", (req, res) => {
 // Rotaları ekle
 const userRoutes = require("./routes/userRoutes");
 const campaignRoutes = require("./routes/campaignRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/campaigns", campaignRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Sunucuyu başlat
 const PORT = process.env.PORT || 5001;
