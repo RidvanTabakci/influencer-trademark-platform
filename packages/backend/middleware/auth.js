@@ -4,14 +4,8 @@ const User = require('../models/User');
 // Token doğrulama middleware'i
 const auth = async (req, res, next) => {
   try {
-    console.log('Auth middleware - Headers:', req.headers);
-    console.log('Auth middleware - JWT_SECRET exists:', !!process.env.JWT_SECRET);
-    
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    console.log('Auth middleware - Token:', token);
-    
     if (!token) {
-      console.log('Auth middleware - No token provided');
       return res.status(401).json({ error: 'Yetkilendirme hatası!' });
     }
 
@@ -21,13 +15,8 @@ const auth = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Auth middleware - Decoded token:', decoded);
-    
     const user = await User.findById(decoded.id);
-    console.log('Auth middleware - Found user:', user ? 'Yes' : 'No');
-    
     if (!user) {
-      console.log('Auth middleware - User not found');
       return res.status(401).json({ error: 'Kullanıcı bulunamadı!' });
     }
 

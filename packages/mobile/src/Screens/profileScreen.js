@@ -119,6 +119,20 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
+  const handleSavePersonalInfo = async () => {
+    try {
+      // Burada kişisel bilgileri güncelleyen bir API çağrısı olmalı
+      // Örneğin: await authService.updatePersonalInfo(personalInfo);
+      // Şimdilik örnek olarak sadece Alert gösteriyorum
+      setIsEditingPersonal(false);
+      setError("");
+      Alert.alert("Başarılı", "Kişisel bilgileriniz güncellendi.");
+    } catch (error) {
+      setError("Kişisel bilgiler kaydedilemedi");
+      Alert.alert("Hata", "Kişisel bilgiler kaydedilemedi.");
+    }
+  };
+
   if (loading || !user) {
     return (
       <View style={styles.container}>
